@@ -1,4 +1,4 @@
-package com.example.meditation_app
+package com.indoss.meditation_app
 
 import io.flutter.embedding.android.FlutterActivity
 
