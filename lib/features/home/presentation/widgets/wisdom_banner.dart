@@ -23,8 +23,6 @@ class _WisdomBannerState extends State<WisdomBanner> {
       children: [
         SizedBox(
           height: 191,
-          // widen the PageView by the gap so cards keep full width
-          // but show space between them while swiping
           child: LayoutBuilder(
             builder: (_, constraints) => OverflowBox(
               minWidth: constraints.maxWidth + pageGap,

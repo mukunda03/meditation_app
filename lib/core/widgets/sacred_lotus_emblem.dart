@@ -4,8 +4,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-/// The app logo: lotus in a glass medallion with aura rings.
-/// Laid out at the design size (176) and scaled to [size].
 class SacredLotusEmblem extends StatelessWidget {
   const SacredLotusEmblem({super.key, this.size = 176});
 
@@ -110,8 +108,6 @@ class _Medallion extends StatelessWidget {
           ),
         ],
       ),
-      // Opaque fill: unlike CSS, Flutter paints the shadow under the whole
-      // disc, so a translucent fill would let it show through.
       child: Container(
         alignment: Alignment.center,
         decoration: const BoxDecoration(

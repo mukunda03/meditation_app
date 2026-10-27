@@ -1,20 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../../../profile/data/profile_data.dart';
+import '../../../../core/widgets/app_snack_bar.dart';
+import '../../../auth/providers/account_controller.dart';
+import '../../../profile/presentation/screens/edit_profile_screen.dart';
+import '../../../profile/providers/profile_providers.dart';
 import '../../data/settings_data.dart';
+import '../widgets/account_dialogs.dart';
 import '../widgets/settings_group_card.dart';
 import '../widgets/settings_header.dart';
 import '../widgets/settings_panel.dart';
 import '../widgets/user_identity_card.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
+  Future<void> _logOut(BuildContext context, WidgetRef ref) async {
+    if (!await confirmLogout(context) || !context.mounted) return;
+    final result = await ref.read(accountControllerProvider.notifier).logOut();
+    if (result.hasError && context.mounted) {
+      showErrorSnackBar(context, result.error);
+    }
+  }
+
+  Future<void> _deleteAccount(BuildContext context, WidgetRef ref) async {
+    final password = await askPasswordToDeleteAccount(context);
+    if (password == null || !context.mounted) return;
+
+    showBlockingProgress(context);
+    final result = await ref
+        .read(accountControllerProvider.notifier)
+        .deleteAccount(password);
+    if (result.hasError && context.mounted) {
+      Navigator.of(context).pop();
+      showErrorSnackBar(context, result.error);
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(userProfileProvider).value;
+
     return Scaffold(
       backgroundColor: AppColors.lavender,
       body: SafeArea(
@@ -23,15 +52,21 @@ class SettingsScreen extends StatelessWidget {
           children: [
             SettingsHeader(onBack: () => Navigator.of(context).maybePop()),
             const SizedBox(height: 20),
-            const UserIdentityCard(user: currentUser),
+            if (user != null)
+              UserIdentityCard(
+                user: user,
+                onEdit: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const EditProfileScreen()),
+                ),
+              ),
             const SizedBox(height: 20),
             for (final group in settingsGroups) ...[
               SettingsGroupCard(group: group),
               const SizedBox(height: 16),
             ],
-            const _DeleteAccountCard(),
+            _DeleteAccountCard(onTap: () => _deleteAccount(context, ref)),
             const SizedBox(height: 28),
-            const _LogoutButton(),
+            _LogoutButton(onTap: () => _logOut(context, ref)),
             const SizedBox(height: 19),
             const Text(
               appVersionLabel,
@@ -62,10 +97,20 @@ class SettingsScreen extends StatelessWidget {
 }
 
 class _DeleteAccountCard extends StatelessWidget {
-  const _DeleteAccountCard();
+  const _DeleteAccountCard({required this.onTap});
+
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: _card(),
+    );
+  }
+
+  Widget _card() {
     return SettingsPanel(
       padding: const EdgeInsets.all(5),
       borderColor: const Color(0xB3FEE2E2),
@@ -112,10 +157,20 @@ class _DeleteAccountCard extends StatelessWidget {
 }
 
 class _LogoutButton extends StatelessWidget {
-  const _LogoutButton();
+  const _LogoutButton({required this.onTap});
+
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: _button(),
+    );
+  }
+
+  Widget _button() {
     return SettingsPanel(
       padding: const EdgeInsets.symmetric(horizontal: 21, vertical: 15),
       borderColor: const Color(0xF2FFFFFF),

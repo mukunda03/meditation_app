@@ -1,21 +1,5 @@
 import 'package:flutter/material.dart';
 
-class UserProfile {
-  const UserProfile({
-    required this.name,
-    required this.email,
-    required this.country,
-    required this.tier,
-    required this.avatar,
-  });
-
-  final String name;
-  final String email;
-  final String country;
-  final String tier;
-  final String avatar;
-}
-
 class PracticeStat {
   const PracticeStat({
     required this.value,
@@ -62,13 +46,7 @@ class ProfileTab {
   final List<ProfileTrack> tracks;
 }
 
-const currentUser = UserProfile(
-  name: 'Samyuktha J',
-  email: 'samyu@indosakura.com',
-  country: 'India',
-  tier: 'Arhatic Practitioner • Level 1',
-  avatar: 'assets/images/profile_avatar.jpg',
-);
+const practitionerTier = 'Arhatic Practitioner • Level 1';
 
 const practiceStats = [
   PracticeStat(
@@ -125,7 +103,6 @@ const profileTabs = [
       ),
     ],
   ),
-  // Dummy data for the Favorites and Downloads tabs.
   ProfileTab(
     label: 'Favorites',
     sectionTitle: 'FAVORITE MEDITATIONS',

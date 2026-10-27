@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/sacred_lotus_emblem.dart';
-import '../../shell/presentation/main_shell.dart';
+import '../../auth/presentation/auth_gate.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -39,7 +39,7 @@ class _SplashScreenState extends State<SplashScreen>
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 600),
-        pageBuilder: (_, _, _) => const MainShell(),
+        pageBuilder: (_, _, _) => const AuthGate(),
         transitionsBuilder: (_, animation, _, child) =>
             FadeTransition(opacity: animation, child: child),
       ),
@@ -107,6 +107,14 @@ class _SplashScreenState extends State<SplashScreen>
                           letterSpacing: 8,
                           color: Colors.white,
                         ),
+                      ),
+                    ),
+                    const SizedBox(height: 40),
+                    const SizedBox.square(
+                      dimension: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        color: AppColors.violet,
                       ),
                     ),
                   ],

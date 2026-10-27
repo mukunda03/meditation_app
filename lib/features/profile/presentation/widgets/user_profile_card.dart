@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../data/profile_data.dart';
+import '../../data/user_profile.dart';
+import 'user_avatar.dart';
 
 class UserProfileCard extends StatelessWidget {
   const UserProfileCard({super.key, required this.user});
@@ -14,7 +16,7 @@ class UserProfileCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        _AuraAvatar(image: user.avatar),
+        _AuraAvatar(user: user),
         const SizedBox(width: 16),
         Expanded(
           child: Column(
@@ -24,7 +26,7 @@ class UserProfileCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      user.name,
+                      user.fullName,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.sora(
@@ -35,7 +37,7 @@ class UserProfileCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  _CountryChip(label: user.country),
+                  _CountryChip(label: user.countryName),
                 ],
               ),
               const SizedBox(height: 2),
@@ -50,7 +52,7 @@ class UserProfileCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              _TierBadge(label: user.tier),
+              const _TierBadge(label: practitionerTier),
             ],
           ),
         ),
@@ -60,9 +62,9 @@ class UserProfileCard extends StatelessWidget {
 }
 
 class _AuraAvatar extends StatelessWidget {
-  const _AuraAvatar({required this.image});
+  const _AuraAvatar({required this.user});
 
-  final String image;
+  final UserProfile user;
 
   @override
   Widget build(BuildContext context) {
@@ -91,11 +93,9 @@ class _AuraAvatar extends StatelessWidget {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(14),
-            child: Image.asset(image, fit: BoxFit.cover),
+            child: UserAvatar(uid: user.uid, initials: user.initials),
           ),
         ),
-        // The badge SVG carries its own drop-shadow padding (24px around a
-        // 20px dot), so it is offset to keep the dot at -4/-4.
         Positioned(
           right: -6,
           bottom: -7,
