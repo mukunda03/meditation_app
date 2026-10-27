@@ -47,11 +47,7 @@ flutter run
 
 You'll need your own Firebase project. Add `google-services.json` to `android/app/`, then enable Email/Password Auth and Firestore.
 
-## Roadmap
 
-- [ ] Audio playback
-- [ ] Load albums and playlists from Firestore
-- [ ] Reminders and offline downloads
 
 ## Author
 
