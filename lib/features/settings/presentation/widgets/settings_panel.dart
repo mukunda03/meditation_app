@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Frosted white card shared by the settings sections.
 class SettingsPanel extends StatelessWidget {
   const SettingsPanel({
     super.key,

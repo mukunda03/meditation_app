@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../shell/presentation/main_shell.dart';
+import '../../../../core/widgets/app_snack_bar.dart';
+import '../../providers/account_controller.dart';
 import '../../providers/auth_form_providers.dart';
+import '../auth_validators.dart';
 import '../widgets/app_logo_tile.dart';
 import '../widgets/auth_footer_link.dart';
 import '../widgets/auth_scaffold.dart';
@@ -14,26 +16,43 @@ import 'sign_up_screen.dart';
 class LoginScreen extends ConsumerWidget {
   const LoginScreen({super.key});
 
-  void _logIn(BuildContext context, WidgetRef ref) {
+  Future<void> _logIn(BuildContext context, WidgetRef ref) async {
     FocusScope.of(context).unfocus();
     if (!ref.read(loginFormProvider.notifier).submit()) return;
-    // TODO: authenticate with Firebase once the auth layer lands.
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const MainShell()),
-      (_) => false,
-    );
+    final form = ref.read(loginFormProvider);
+    final result = await ref
+        .read(accountControllerProvider.notifier)
+        .logIn(form.email, form.password);
+    if (result.hasError && context.mounted) {
+      showErrorSnackBar(context, result.error);
+    }
   }
 
-  void _forgotPassword(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Password reset is coming soon.')),
-    );
+  Future<void> _forgotPassword(BuildContext context, WidgetRef ref) async {
+    final email = ref.read(loginFormProvider).email.trim();
+    if (AuthValidators.email(email) != null) {
+      showAppSnackBar(context, 'Enter your email above, then tap this again.');
+      return;
+    }
+    final result = await ref
+        .read(accountControllerProvider.notifier)
+        .sendPasswordReset(email);
+    if (!context.mounted) return;
+    if (result.hasError) {
+      showErrorSnackBar(context, result.error);
+    } else {
+      showAppSnackBar(
+        context,
+        "If an account exists for $email, we've sent a reset link.",
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final form = ref.watch(loginFormProvider);
     final notifier = ref.read(loginFormProvider.notifier);
+    final isBusy = ref.watch(accountControllerProvider).isLoading;
 
     return AuthScaffold(
       child: AutofillGroup(
@@ -76,7 +95,7 @@ class LoginScreen extends ConsumerWidget {
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
-                onPressed: () => _forgotPassword(context),
+                onPressed: isBusy ? null : () => _forgotPassword(context, ref),
                 style: TextButton.styleFrom(
                   foregroundColor: AuthStyles.link,
                   padding: const EdgeInsets.symmetric(vertical: 8),
@@ -90,6 +109,7 @@ class LoginScreen extends ConsumerWidget {
             const SizedBox(height: 12),
             PrimaryButton(
               label: 'Log in',
+              isLoading: isBusy,
               onPressed: () => _logIn(context, ref),
             ),
             const Spacer(),

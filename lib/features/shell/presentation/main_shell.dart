@@ -180,7 +180,6 @@ class _NavItem extends StatelessWidget {
   }
 }
 
-/// Floating pill dock used by the My Albums tab.
 class _AlbumsDock extends StatelessWidget {
   const _AlbumsDock({required this.index, required this.onTap});
 
@@ -303,7 +302,6 @@ class _AlbumsNavItem extends StatelessWidget {
   }
 }
 
-/// Floating pill dock used by the Playlists tab.
 class _PillDock extends StatelessWidget {
   const _PillDock({required this.index, required this.onTap});
 
@@ -432,7 +430,6 @@ class _PillNavItem extends StatelessWidget {
   }
 }
 
-/// Rounded glass dock used by the Profile tab.
 class _ProfileDock extends StatelessWidget {
   const _ProfileDock({required this.index, required this.onTap});
 
@@ -556,8 +553,6 @@ class _ProfileNavItem extends StatelessWidget {
   }
 }
 
-/// 20x20 outline icons for the Profile dock, assembled from the Figma
-/// vector layers at their original offsets.
 class _ProfileDockIcon extends StatelessWidget {
   const _ProfileDockIcon({required this.tab});
 

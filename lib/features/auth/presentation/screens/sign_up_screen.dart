@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/widgets/app_snack_bar.dart';
+import '../../providers/account_controller.dart';
 import '../../providers/auth_form_providers.dart';
 import '../widgets/auth_back_button.dart';
 import '../widgets/auth_footer_link.dart';
@@ -9,26 +11,27 @@ import '../widgets/auth_styles.dart';
 import '../widgets/auth_text_field.dart';
 import '../widgets/primary_button.dart';
 import '../widgets/step_indicator.dart';
-import 'complete_profile_screen.dart';
 
-/// Sign up, step 1 of 2: email and password.
 class SignUpScreen extends ConsumerWidget {
   const SignUpScreen({super.key});
 
-  void _createAccount(BuildContext context, WidgetRef ref) {
+  Future<void> _createAccount(BuildContext context, WidgetRef ref) async {
     FocusScope.of(context).unfocus();
     if (!ref.read(signUpFormProvider.notifier).submit()) return;
-    // TODO: create the Firebase user once the auth layer lands.
-    final email = ref.read(signUpFormProvider).email.trim();
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => CompleteProfileScreen(email: email)),
-    );
+    final form = ref.read(signUpFormProvider);
+    final result = await ref
+        .read(accountControllerProvider.notifier)
+        .signUp(form.email, form.password);
+    if (result.hasError && context.mounted) {
+      showErrorSnackBar(context, result.error);
+    }
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final form = ref.watch(signUpFormProvider);
     final notifier = ref.read(signUpFormProvider.notifier);
+    final isBusy = ref.watch(accountControllerProvider).isLoading;
 
     return AuthScaffold(
       child: FillViewportScroll(
@@ -92,6 +95,7 @@ class SignUpScreen extends ConsumerWidget {
           const SizedBox(height: 20),
           PrimaryButton(
             label: 'Create account',
+            isLoading: isBusy,
             onPressed: () => _createAccount(context, ref),
           ),
           const Spacer(),

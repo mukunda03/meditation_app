@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../shell/presentation/main_shell.dart';
+import '../../../../core/widgets/app_snack_bar.dart';
+import '../../providers/account_controller.dart';
 import '../../providers/auth_form_providers.dart';
 import '../widgets/auth_back_button.dart';
 import '../widgets/auth_scaffold.dart';
@@ -13,33 +14,42 @@ import '../widgets/primary_button.dart';
 import '../widgets/profile_photo_picker.dart';
 import '../widgets/step_indicator.dart';
 
-/// Sign up, step 2 of 2: photo, name, date of birth and country.
 class CompleteProfileScreen extends ConsumerWidget {
   const CompleteProfileScreen({super.key, required this.email});
 
   final String email;
 
-  void _continue(BuildContext context, WidgetRef ref) {
+  Future<void> _continue(BuildContext context, WidgetRef ref) async {
     FocusScope.of(context).unfocus();
     if (!ref.read(completeProfileFormProvider.notifier).submit()) return;
-    // TODO: save the profile to Firestore once the auth layer lands.
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const MainShell()),
-      (_) => false,
-    );
+    final result = await ref
+        .read(accountControllerProvider.notifier)
+        .completeProfile(ref.read(completeProfileFormProvider));
+    if (result.hasError && context.mounted) {
+      showErrorSnackBar(context, result.error);
+    }
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final form = ref.watch(completeProfileFormProvider);
     final notifier = ref.read(completeProfileFormProvider.notifier);
+    final isBusy = ref.watch(accountControllerProvider).isLoading;
 
     return AuthScaffold(
       child: FillViewportScroll(
         children: [
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [AuthBackButton(), StepIndicator(step: 2)],
+            children: [
+              AuthBackButton(
+                onTap: isBusy
+                    ? null
+                    : () =>
+                          ref.read(accountControllerProvider.notifier).logOut(),
+              ),
+              const StepIndicator(step: 2),
+            ],
           ),
           const SizedBox(height: 28),
           Text('Complete your profile', style: AuthStyles.display()),
@@ -84,6 +94,7 @@ class CompleteProfileScreen extends ConsumerWidget {
           const Spacer(),
           PrimaryButton(
             label: 'Continue',
+            isLoading: isBusy,
             onPressed: () => _continue(context, ref),
           ),
         ],

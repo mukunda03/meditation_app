@@ -6,25 +6,20 @@ import 'package:image_picker/image_picker.dart';
 
 import 'auth_styles.dart';
 
-/// Circular avatar with a camera badge. Tapping it lets the user take or
-/// choose a photo via image_picker.
-///
-/// With no photo it shows [initials] on a gradient when given, otherwise
-/// the dashed "add photo" placeholder.
 class ProfilePhotoPicker extends StatelessWidget {
   const ProfilePhotoPicker({
     super.key,
     required this.label,
     required this.onPicked,
     this.imagePath,
-    this.initials,
+    this.current,
     this.size = 104,
   });
 
   final String label;
   final ValueChanged<String> onPicked;
   final String? imagePath;
-  final String? initials;
+  final Widget? current;
   final double size;
 
   Future<void> _pick(BuildContext context) async {
@@ -90,28 +85,7 @@ class ProfilePhotoPicker extends StatelessWidget {
     if (imagePath != null) {
       return ClipOval(child: Image.file(File(imagePath!), fit: BoxFit.cover));
     }
-    if (initials != null) {
-      return DecoratedBox(
-        decoration: const BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF7C3AED), Color(0xFFC0267D)],
-          ),
-        ),
-        child: Center(
-          child: Text(
-            initials!,
-            style: TextStyle(
-              fontSize: size * 0.33,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      );
-    }
+    if (current != null) return ClipOval(child: current);
     return CustomPaint(
       painter: const _DashedCirclePainter(),
       child: const DecoratedBox(

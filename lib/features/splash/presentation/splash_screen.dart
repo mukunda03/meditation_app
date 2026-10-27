@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../onboarding/presentation/screens/onboarding_screen.dart';
+import '../../auth/presentation/auth_gate.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -50,7 +50,7 @@ class _SplashScreenState extends State<SplashScreen>
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 600),
-        pageBuilder: (_, _, _) => const OnboardingScreen(),
+        pageBuilder: (_, _, _) => const AuthGate(),
         transitionsBuilder: (_, animation, _, child) =>
             FadeTransition(opacity: animation, child: child),
       ),
@@ -148,7 +148,6 @@ class _SplashScreenState extends State<SplashScreen>
   }
 }
 
-/// The lotus logo in a glowing disc, with halo rings that breathe outward.
 class _AuraEmblem extends StatelessWidget {
   const _AuraEmblem({required this.pulse});
 
@@ -163,7 +162,6 @@ class _AuraEmblem extends StatelessWidget {
         children: [
           _ring(212, 0.12),
           _ring(170, 0.18),
-          // A soft ring that grows from the disc and fades out.
           AnimatedBuilder(
             animation: pulse,
             builder: (context, _) {

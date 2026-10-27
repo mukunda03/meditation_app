@@ -2,11 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'auth_styles.dart';
 
-/// Labelled text field used across the auth and profile forms.
-///
-/// Pass [onTap] with [readOnly] to make the field act as a picker trigger
-/// (date of birth, country). [locked] renders the greyed, non-editable
-/// variant used for the account email.
 class AuthTextField extends StatelessWidget {
   const AuthTextField({
     super.key,
@@ -33,7 +28,6 @@ class AuthTextField extends StatelessWidget {
   final String? initialValue;
   final ValueChanged<String>? onChanged;
 
-  /// Shown under the field in red; pass null to clear it.
   final String? errorText;
   final String? hint;
   final String? helper;
@@ -118,7 +112,6 @@ class AuthTextField extends StatelessWidget {
   }
 }
 
-/// Eye toggle for password fields.
 class PasswordVisibilityToggle extends StatelessWidget {
   const PasswordVisibilityToggle({
     super.key,

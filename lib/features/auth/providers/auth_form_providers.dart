@@ -1,16 +1,8 @@
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../profile/data/profile_data.dart';
+import '../../profile/providers/profile_providers.dart';
 import '../presentation/auth_validators.dart';
-
-// Errors stay hidden until the first submit. After that they are recomputed
-// from the current values on every change, so a message clears as soon as
-// the field becomes valid.
-
-// ---------------------------------------------------------------------------
-// Login
-// ---------------------------------------------------------------------------
 
 class LoginFormState {
   const LoginFormState({
@@ -56,7 +48,6 @@ class LoginFormNotifier extends Notifier<LoginFormState> {
   void setPassword(String value) => state = state.copyWith(password: value);
   void toggleObscured() => state = state.copyWith(obscured: !state.obscured);
 
-  /// Reveals any errors and reports whether the form can be sent.
   bool submit() {
     state = state.copyWith(submitted: true);
     return state.isValid;
@@ -67,10 +58,6 @@ final loginFormProvider =
     NotifierProvider.autoDispose<LoginFormNotifier, LoginFormState>(
       LoginFormNotifier.new,
     );
-
-// ---------------------------------------------------------------------------
-// Sign up (step 1)
-// ---------------------------------------------------------------------------
 
 class SignUpFormState {
   const SignUpFormState({
@@ -157,10 +144,6 @@ final signUpFormProvider =
       SignUpFormNotifier.new,
     );
 
-// ---------------------------------------------------------------------------
-// Profile details (sign up step 2 and Edit Profile)
-// ---------------------------------------------------------------------------
-
 class ProfileFormState {
   const ProfileFormState({
     required this.country,
@@ -215,10 +198,10 @@ class ProfileFormState {
 class ProfileFormNotifier extends Notifier<ProfileFormState> {
   ProfileFormNotifier(this._initial);
 
-  final ProfileFormState Function() _initial;
+  final ProfileFormState Function(Ref ref) _initial;
 
   @override
-  ProfileFormState build() => _initial();
+  ProfileFormState build() => _initial(ref);
 
   void setName(String value) => state = state.copyWith(name: value);
   void setDateOfBirth(DateTime value) =>
@@ -234,20 +217,19 @@ class ProfileFormNotifier extends Notifier<ProfileFormState> {
 
 final _india = Country.parse('IN');
 
-/// Blank form for a brand-new account.
 final completeProfileFormProvider =
     NotifierProvider.autoDispose<ProfileFormNotifier, ProfileFormState>(
-      () => ProfileFormNotifier(() => ProfileFormState(country: _india)),
+      () => ProfileFormNotifier((_) => ProfileFormState(country: _india)),
     );
 
-/// Pre-filled with the signed-in user's details.
 final editProfileFormProvider =
     NotifierProvider.autoDispose<ProfileFormNotifier, ProfileFormState>(
-      () => ProfileFormNotifier(
-        () => ProfileFormState(
-          name: currentUser.name,
-          dateOfBirth: currentUserDateOfBirth,
-          country: Country.tryParse(currentUser.country) ?? _india,
-        ),
-      ),
+      () => ProfileFormNotifier((ref) {
+        final user = ref.read(userProfileProvider).value;
+        return ProfileFormState(
+          name: user?.fullName ?? '',
+          dateOfBirth: user?.dateOfBirth,
+          country: Country.tryParse(user?.countryCode ?? '') ?? _india,
+        );
+      }),
     );

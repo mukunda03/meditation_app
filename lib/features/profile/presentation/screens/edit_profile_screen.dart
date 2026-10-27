@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../auth/presentation/widgets/auth_back_button.dart';
 import '../../../auth/presentation/widgets/auth_scaffold.dart';
 import '../../../auth/presentation/widgets/auth_styles.dart';
@@ -9,29 +10,35 @@ import '../../../auth/presentation/widgets/country_field.dart';
 import '../../../auth/presentation/widgets/date_of_birth_field.dart';
 import '../../../auth/presentation/widgets/primary_button.dart';
 import '../../../auth/presentation/widgets/profile_photo_picker.dart';
+import '../../../auth/providers/account_controller.dart';
 import '../../../auth/providers/auth_form_providers.dart';
-import '../../data/profile_data.dart';
+import '../../providers/profile_providers.dart';
+import '../widgets/user_avatar.dart';
 
 class EditProfileScreen extends ConsumerWidget {
-  const EditProfileScreen({super.key, required this.user});
+  const EditProfileScreen({super.key});
 
-  final UserProfile user;
-
-  void _save(BuildContext context, WidgetRef ref) {
+  Future<void> _save(BuildContext context, WidgetRef ref) async {
     FocusScope.of(context).unfocus();
     if (!ref.read(editProfileFormProvider.notifier).submit()) return;
-    // TODO: persist the profile once the auth layer lands.
-    final messenger = ScaffoldMessenger.of(context);
+    final result = await ref
+        .read(accountControllerProvider.notifier)
+        .saveProfile(ref.read(editProfileFormProvider));
+    if (!context.mounted) return;
+    if (result.hasError) {
+      showErrorSnackBar(context, result.error);
+      return;
+    }
+    showAppSnackBar(context, 'Your profile has been updated.');
     Navigator.of(context).pop();
-    messenger.showSnackBar(
-      const SnackBar(content: Text('Your profile has been updated.')),
-    );
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(userProfileProvider).value;
     final form = ref.watch(editProfileFormProvider);
     final notifier = ref.read(editProfileFormProvider.notifier);
+    final isBusy = ref.watch(accountControllerProvider).isLoading;
 
     return AuthScaffold(
       child: FillViewportScroll(
@@ -56,7 +63,9 @@ class EditProfileScreen extends ConsumerWidget {
               label: 'Change photo',
               size: 96,
               imagePath: form.photoPath,
-              initials: form.initials,
+              current: user == null
+                  ? InitialsAvatar(initials: form.initials)
+                  : UserAvatar(uid: user.uid, initials: form.initials),
               onPicked: notifier.setPhotoPath,
             ),
           ),
@@ -81,7 +90,7 @@ class EditProfileScreen extends ConsumerWidget {
           const SizedBox(height: 20),
           AuthTextField(
             label: 'Email',
-            initialValue: user.email,
+            initialValue: user?.email ?? '',
             locked: true,
             helper: 'Email can\'t be changed.',
           ),
@@ -89,11 +98,12 @@ class EditProfileScreen extends ConsumerWidget {
           const Spacer(),
           PrimaryButton(
             label: 'Save changes',
+            isLoading: isBusy,
             onPressed: () => _save(context, ref),
           ),
           const SizedBox(height: 8),
           TextButton(
-            onPressed: () => Navigator.of(context).maybePop(),
+            onPressed: isBusy ? null : () => Navigator.of(context).maybePop(),
             style: TextButton.styleFrom(
               foregroundColor: AuthStyles.body,
               padding: const EdgeInsets.symmetric(vertical: 14),

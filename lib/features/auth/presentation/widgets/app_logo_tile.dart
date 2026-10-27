@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// The app icon as a rounded tile, as shown above the login heading.
 class AppLogoTile extends StatelessWidget {
   const AppLogoTile({super.key, this.size = 56});
 

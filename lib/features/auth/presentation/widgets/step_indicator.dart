@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'auth_styles.dart';
 
-/// "Step 1 of 2" label followed by one bar per step.
 class StepIndicator extends StatelessWidget {
   const StepIndicator({super.key, required this.step, this.total = 2});
 

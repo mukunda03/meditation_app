@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../settings/presentation/screens/settings_screen.dart';
 import '../../data/profile_data.dart';
+import '../../providers/profile_providers.dart';
 import '../widgets/daily_quote_pill.dart';
 import '../widgets/practice_stats_row.dart';
 import '../widgets/profile_header.dart';
@@ -11,14 +13,14 @@ import '../widgets/profile_tab_bar.dart';
 import '../widgets/profile_track_tile.dart';
 import '../widgets/user_profile_card.dart';
 
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   int _tab = 0;
 
   void _openSettings() {
@@ -29,6 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final tab = profileTabs[_tab];
+    final user = ref.watch(userProfileProvider).value;
 
     return SafeArea(
       bottom: false,
@@ -39,10 +42,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: ProfileHeader(onMenuTap: _openSettings),
           ),
-          const Padding(
-            padding: EdgeInsets.fromLTRB(24, 16, 24, 20),
-            child: UserProfileCard(user: currentUser),
-          ),
+          if (user != null)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 20),
+              child: UserProfileCard(user: user),
+            ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(

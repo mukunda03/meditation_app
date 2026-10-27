@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
 
-/// Frosted segmented control for Recently Played / Favorites / Downloads.
 class ProfileTabBar extends StatelessWidget {
   const ProfileTabBar({
     super.key,

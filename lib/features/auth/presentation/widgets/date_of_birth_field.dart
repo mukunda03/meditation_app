@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'auth_styles.dart';
 import 'auth_text_field.dart';
 
-/// Read-only field that opens a calendar_date_picker2 dialog.
 class DateOfBirthField extends StatefulWidget {
   const DateOfBirthField({
     super.key,

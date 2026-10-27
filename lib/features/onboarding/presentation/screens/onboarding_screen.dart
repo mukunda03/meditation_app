@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../auth/presentation/screens/login_screen.dart';
 import '../../../auth/presentation/widgets/auth_scaffold.dart';
 import '../../../auth/presentation/widgets/auth_styles.dart';
 import '../../../auth/presentation/widgets/primary_button.dart';
+import '../../providers/onboarding_providers.dart';
 import '../widgets/onboarding_illustrations.dart';
 
 class _OnboardingPage {
@@ -35,14 +36,14 @@ const _pages = [
   ),
 ];
 
-class OnboardingScreen extends StatefulWidget {
+class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
 
   @override
-  State<OnboardingScreen> createState() => _OnboardingScreenState();
+  ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> {
+class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final _controller = PageController();
   int _page = 0;
 
@@ -62,11 +63,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  void _finish() {
-    Navigator.of(
-      context,
-    ).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen()));
-  }
+  void _finish() => ref.read(onboardingSeenProvider.notifier).markSeen();
 
   @override
   Widget build(BuildContext context) {

@@ -5,7 +5,6 @@ import '../../../../core/theme/app_colors.dart';
 const _violet = Color(0xFF6D28D9);
 const _magenta = Color(0xFFC0267D);
 
-/// Pale blush-to-lavender disc both illustrations sit on.
 class _HaloDisc extends StatelessWidget {
   const _HaloDisc({required this.size, required this.child});
 
@@ -31,7 +30,6 @@ class _HaloDisc extends StatelessWidget {
   }
 }
 
-/// Page 1: a soundwave inside concentric halo rings.
 class SoundwaveIllustration extends StatelessWidget {
   const SoundwaveIllustration({super.key});
 
@@ -81,7 +79,6 @@ class SoundwaveIllustration extends StatelessWidget {
   }
 }
 
-/// Page 2: a stack of playlist cards with a "now playing" row on top.
 class PlaylistStackIllustration extends StatelessWidget {
   const PlaylistStackIllustration({super.key});
 

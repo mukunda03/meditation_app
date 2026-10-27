@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 import 'auth_styles.dart';
 
-/// "Already have an account? Log in" style footer.
 class AuthFooterLink extends StatelessWidget {
   const AuthFooterLink({
     super.key,

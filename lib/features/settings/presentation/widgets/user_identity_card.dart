@@ -3,7 +3,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../../../profile/data/profile_data.dart';
+import '../../../profile/data/user_profile.dart';
+import '../../../profile/presentation/widgets/user_avatar.dart';
 import 'settings_panel.dart';
 
 class UserIdentityCard extends StatelessWidget {
@@ -19,7 +20,6 @@ class UserIdentityCard extends StatelessWidget {
       borderColor: const Color(0xE6FFFFFF),
       child: Stack(
         children: [
-          // Ambient glow tucked into the top-right corner.
           Positioned(
             top: -32,
             right: -32,
@@ -47,14 +47,14 @@ class UserIdentityCard extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                _StatusAvatar(image: user.avatar),
+                _StatusAvatar(user: user),
                 const SizedBox(width: 14),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        user.name,
+                        user.fullName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.sora(
@@ -91,9 +91,9 @@ class UserIdentityCard extends StatelessWidget {
 }
 
 class _StatusAvatar extends StatelessWidget {
-  const _StatusAvatar({required this.image});
+  const _StatusAvatar({required this.user});
 
-  final String image;
+  final UserProfile user;
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +114,9 @@ class _StatusAvatar extends StatelessWidget {
               ),
             ],
           ),
-          child: ClipOval(child: Image.asset(image, fit: BoxFit.cover)),
+          child: ClipOval(
+            child: UserAvatar(uid: user.uid, initials: user.initials),
+          ),
         ),
         Positioned(
           right: -2,

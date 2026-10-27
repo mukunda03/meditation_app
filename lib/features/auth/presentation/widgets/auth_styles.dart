@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/theme/app_colors.dart';
 
-/// Colours and text styles shared by the onboarding and auth screens.
 class AuthStyles {
   AuthStyles._();
 

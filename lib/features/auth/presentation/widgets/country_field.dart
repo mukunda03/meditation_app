@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'auth_styles.dart';
 import 'auth_text_field.dart';
 
-/// Read-only field that opens the country_picker bottom sheet.
 class CountryField extends StatefulWidget {
   const CountryField({super.key, required this.value, required this.onChanged});
 

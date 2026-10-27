@@ -135,7 +135,6 @@ class _TrackArt extends StatelessWidget {
   }
 }
 
-/// Pulsing rose dot marking the track that is currently playing.
 class _PlayingDot extends StatefulWidget {
   const _PlayingDot();
 

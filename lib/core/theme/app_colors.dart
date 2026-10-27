@@ -17,7 +17,6 @@ class AppColors {
   static const glassBorder = Color(0xD9FFFFFF);
   static const cardShadow = Color(0x177C3AED);
 
-  // Sanctuary palette (My Albums, splash)
   static const lavender = Color(0xFFFAF7FD);
   static const violet = Color(0xFF5341CD);
   static const ink = Color(0xFF1A1A2A);

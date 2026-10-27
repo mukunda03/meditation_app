@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Soft blush-to-lavender backdrop shared by onboarding, auth and the
-/// profile forms.
 class AuthScaffold extends StatelessWidget {
   const AuthScaffold({super.key, required this.child});
 
@@ -25,8 +23,6 @@ class AuthScaffold extends StatelessWidget {
   }
 }
 
-/// Scrolls when the keyboard is up, but otherwise stretches to the full
-/// viewport so a [Spacer] can pin footers to the bottom.
 class FillViewportScroll extends StatelessWidget {
   const FillViewportScroll({
     super.key,
