@@ -70,6 +70,9 @@ const currentUser = UserProfile(
   avatar: 'assets/images/profile_avatar.jpg',
 );
 
+// DateTime has no const constructor, so it lives outside [currentUser].
+final currentUserDateOfBirth = DateTime(1996, 5, 12);
+
 const practiceStats = [
   PracticeStat(
     value: '128',

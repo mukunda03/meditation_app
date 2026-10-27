@@ -7,9 +7,10 @@ import '../../../profile/data/profile_data.dart';
 import 'settings_panel.dart';
 
 class UserIdentityCard extends StatelessWidget {
-  const UserIdentityCard({super.key, required this.user});
+  const UserIdentityCard({super.key, required this.user, this.onEdit});
 
   final UserProfile user;
+  final VoidCallback? onEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +80,7 @@ class UserIdentityCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 14),
-                const _EditPill(),
+                _EditPill(onTap: onEdit),
               ],
             ),
           ),
@@ -134,10 +135,16 @@ class _StatusAvatar extends StatelessWidget {
 }
 
 class _EditPill extends StatelessWidget {
-  const _EditPill();
+  const _EditPill({this.onTap});
+
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
+    return GestureDetector(onTap: onTap, child: _pill());
+  }
+
+  Widget _pill() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
       decoration: BoxDecoration(

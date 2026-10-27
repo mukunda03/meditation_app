@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../profile/data/profile_data.dart';
+import '../../../profile/presentation/screens/edit_profile_screen.dart';
 import '../../data/settings_data.dart';
 import '../widgets/settings_group_card.dart';
 import '../widgets/settings_header.dart';
@@ -23,7 +24,14 @@ class SettingsScreen extends StatelessWidget {
           children: [
             SettingsHeader(onBack: () => Navigator.of(context).maybePop()),
             const SizedBox(height: 20),
-            const UserIdentityCard(user: currentUser),
+            UserIdentityCard(
+              user: currentUser,
+              onEdit: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const EditProfileScreen(user: currentUser),
+                ),
+              ),
+            ),
             const SizedBox(height: 20),
             for (final group in settingsGroups) ...[
               SettingsGroupCard(group: group),
