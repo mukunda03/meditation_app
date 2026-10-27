@@ -8,10 +8,12 @@ import '../../albums/presentation/screens/albums_screen.dart';
 import '../../home/presentation/screens/home_screen.dart';
 import '../../player/presentation/widgets/mini_player.dart';
 import '../../playlists/presentation/screens/playlists_screen.dart';
+import '../../profile/presentation/screens/profile_screen.dart';
 
 const _homeTab = 0;
 const _albumsTab = 1;
 const _playlistsTab = 2;
+const _profileTab = 3;
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
@@ -23,12 +25,7 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   int _index = _homeTab;
 
-  void _onTabSelected(int index) {
-    // Profile is not built yet.
-    if (index == _homeTab || index == _albumsTab || index == _playlistsTab) {
-      setState(() => _index = index);
-    }
-  }
+  void _onTabSelected(int index) => setState(() => _index = index);
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +53,7 @@ class _MainShellState extends State<MainShell> {
             switch (_index) {
               _albumsTab => const AlbumsScreen(),
               _playlistsTab => const PlaylistsScreen(),
+              _profileTab => const ProfileScreen(),
               _ => const HomeScreen(),
             },
             Positioned(
@@ -74,6 +72,8 @@ class _MainShellState extends State<MainShell> {
                       _BottomDock(index: _index, onTap: _onTabSelected),
                     ] else if (_index == _albumsTab)
                       _AlbumsDock(index: _index, onTap: _onTabSelected)
+                    else if (_index == _profileTab)
+                      _ProfileDock(index: _index, onTap: _onTabSelected)
                     else
                       _PillDock(index: _index, onTap: _onTabSelected),
                   ],
@@ -428,6 +428,168 @@ class _PillNavItem extends StatelessWidget {
             ),
           ),
       ],
+    );
+  }
+}
+
+/// Rounded glass dock used by the Profile tab.
+class _ProfileDock extends StatelessWidget {
+  const _ProfileDock({required this.index, required this.onTap});
+
+  final int index;
+  final ValueChanged<int> onTap;
+
+  static const _labels = ['Home', 'Albums', 'Playlists', 'Profile'];
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: const BoxConstraints(maxWidth: 416),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x40000000),
+            blurRadius: 50,
+            spreadRadius: -12,
+            offset: Offset(0, 25),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 21, vertical: 9),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.9),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.9)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                for (var i = 0; i < _labels.length; i++)
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => onTap(i),
+                    child: _ProfileNavItem(
+                      label: _labels[i],
+                      icon: _ProfileDockIcon(tab: i),
+                      active: i == index,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ProfileNavItem extends StatelessWidget {
+  const _ProfileNavItem({
+    required this.label,
+    required this.icon,
+    this.active = false,
+  });
+
+  final String label;
+  final Widget icon;
+  final bool active;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 56,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.topCenter,
+        children: [
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (active)
+                Container(
+                  width: 28,
+                  height: 28,
+                  alignment: Alignment.center,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF3EEFA),
+                    shape: BoxShape.circle,
+                  ),
+                  child: SvgPicture.asset(
+                    'assets/icons/profile_dock_profile_active.svg',
+                  ),
+                )
+              else
+                icon,
+              const SizedBox(height: 2),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 10,
+                  height: 15 / 10,
+                  fontWeight: FontWeight.w500,
+                  color: active ? const Color(0xFF713B9F) : AppColors.textMuted,
+                ),
+              ),
+            ],
+          ),
+          if (active)
+            Positioned(
+              top: -6,
+              child: Container(
+                width: 24,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF894EBD),
+                  borderRadius: BorderRadius.circular(999),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 20x20 outline icons for the Profile dock, assembled from the Figma
+/// vector layers at their original offsets.
+class _ProfileDockIcon extends StatelessWidget {
+  const _ProfileDockIcon({required this.tab});
+
+  final int tab;
+
+  static const _layers = {
+    _homeTab: [('assets/icons/profile_dock_home.svg', 1.97, 1.44)],
+    _albumsTab: [
+      ('assets/icons/profile_dock_albums_frame.svg', 1.75, 1.75),
+      ('assets/icons/profile_dock_albums_dot.svg', 5.08, 5.08),
+      ('assets/icons/profile_dock_albums_hill.svg', 3.64, 7.27),
+    ],
+    _playlistsTab: [
+      ('assets/icons/profile_dock_playlists_stem.svg', 6.75, 1.62),
+      ('assets/icons/profile_dock_playlists_note_l.svg', 1.75, 11.75),
+      ('assets/icons/profile_dock_playlists_note_r.svg', 11.75, 10.08),
+    ],
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 20,
+      height: 22,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          for (final (asset, left, top)
+              in _layers[tab] ?? const <(String, double, double)>[])
+            Positioned(left: left, top: top, child: SvgPicture.asset(asset)),
+        ],
+      ),
     );
   }
 }
